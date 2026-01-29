@@ -1,5 +1,5 @@
 import type UiContext from '#cli/ui/UiContext.js';
-import RateLimitMiddleware from '@arke-systems/cs-rate-limit-middleware';
+import RateLimitMiddleware from '@arkebcacy/cs-rate-limit-middleware';
 import type createOpenApiClient from 'openapi-fetch';
 import { styleText } from 'util';
 

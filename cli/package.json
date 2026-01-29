@@ -5,7 +5,7 @@
   },
   "bugs": "https://github.com/Arke-Systems/beacon/issues",
   "dependencies": {
-    "@arke-systems/cs-rate-limit-middleware": "^1.0.4",
+    "@arkebcacy/cs-rate-limit-middleware": "^1.0.4",
     "ajv": "^8.17.1",
     "ajv-formats": "^3.0.1",
     "asciichart": "^1.5.25",
@@ -36,7 +36,7 @@
     "#cli/*": "./dist/*"
   },
   "license": "MIT",
-  "name": "@arke-systems/beacon-cli",
+  "name": "@arkebcacy/beacon-cli",
   "publishConfig": {
     "executableFiles": [
       "./dist/beacon.js"

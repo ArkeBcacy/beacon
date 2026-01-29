@@ -29,19 +29,19 @@ and production.
 
 ## Installation
 
-Beacon is available as an NPM package under `@arkebcacy/beacon-cli`. It can
+Beacon is available as an NPM package under `@arkebcacy/beacon-cli-temp`. It can
 be installed using any package manager that supports NPM packages.
 
 ### Install via Yarn:
 
 ```sh
-yarn add --dev @arkebcacy/beacon-cli
+yarn add --dev @arkebcacy/beacon-cli-temp
 ```
 
 ### Install via NPM:
 
 ```sh
-npm install --save-dev @arkebcacy/beacon-cli
+npm install --save-dev @arkebcacy/beacon-cli-temp
 ```
 
 ## Usage
@@ -233,7 +233,7 @@ The YAML configuration file allows for additional options.
 Example:
 
 ```yaml
-# yaml-language-server: $schema=node_modules/@arkebcacy/beacon-cli/dist/cfg/Config.schema.yaml
+# yaml-language-server: $schema=node_modules/@arkebcacy/beacon-cli-temp/dist/cfg/Config.schema.yaml
 
 client:
   api-key: bltcfcf264c-example

@@ -36,7 +36,7 @@
     "#cli/*": "./dist/*"
   },
   "license": "MIT",
-  "name": "@arkebcacy/beacon-cli",
+  "name": "@arkebcacy/beacon-cli-temp",
   "publishConfig": {
     "executableFiles": [
       "./dist/beacon.js"

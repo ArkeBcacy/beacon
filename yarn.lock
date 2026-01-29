@@ -25,9 +25,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@arkebcacy/beacon-cli@workspace:cli":
+"@arkebcacy/beacon-cli-temp@workspace:cli":
   version: 0.0.0-use.local
-  resolution: "@arkebcacy/beacon-cli@workspace:cli"
+  resolution: "@arkebcacy/beacon-cli-temp@workspace:cli"
   dependencies:
     "@arke-systems/cs-rate-limit-middleware": "npm:^1.0.4"
     "@types/asciichart": "npm:^1.5.8"

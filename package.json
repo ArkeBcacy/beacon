@@ -21,7 +21,7 @@
     "#test/*": "./test/*"
   },
   "license": "MIT",
-  "name": "@arkebcacy/beacon",
+  "name": "@arkebcacy/beacon-temp",
   "packageManager": "yarn@4.12.0",
   "repository": "github:ArkeBcacy/beacon",
   "scripts": {

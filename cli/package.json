@@ -1,6 +1,5 @@
 {
   "author": "Chris Nielsen <cnielsen@arke.com>",
-  "private": true,
   "bin": {
     "beacon": "./dist/beacon.js"
   },

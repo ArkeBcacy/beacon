@@ -72,15 +72,18 @@ export default async function getEntryLocales(
 			? item
 			: ({ code: '' } as Record<string, unknown>);
 		const code = typeof rec.code === 'string' ? rec.code : '';
-		return {
-			code,
-			fallback_locale:
-				typeof rec.fallback_locale === 'string'
-					? rec.fallback_locale
-					: undefined,
-			name: typeof rec.name === 'string' ? rec.name : code,
-			uid: typeof rec.uid === 'string' ? rec.uid : code,
-		};
+		const name = typeof rec.name === 'string' ? rec.name : code;
+		const uid = typeof rec.uid === 'string' ? rec.uid : code;
+
+		// Only include `fallback_locale` when present as a string. Construct
+		// the object with the correct shape so TypeScript can verify it against
+		// `LocaleInfo` without unsafe casts.
+		const locale =
+			typeof rec.fallback_locale === 'string'
+				? { code, fallback_locale: rec.fallback_locale, name, uid }
+				: { code, name, uid };
+
+		return locale;
 	});
 
 	return normalized;

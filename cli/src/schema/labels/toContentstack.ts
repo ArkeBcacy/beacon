@@ -62,13 +62,16 @@ async function updateIfNecessary(
 	localLabel: Record<string, unknown>,
 	results: MutableTransferResults,
 ) {
-	const remoteRes = (await ctx.cs.client.GET(`/v3/labels/${uid}`)) as unknown;
+	const remoteRes = (await ctx.cs.client.GET('/v3/labels/{label_uid}', {
+		params: { path: { label_uid: uid } },
+	})) as unknown;
 	const remoteData = (remoteRes as { data?: unknown } | undefined)?.data;
 
 	if (!isRecord(remoteData) || !isRecord(remoteData.label)) {
 		// If we can't parse remote data, err on the side of updating
-		const res = (await ctx.cs.client.PUT(`/v3/labels/${uid}`, {
+		const res = (await ctx.cs.client.PUT('/v3/labels/{label_uid}', {
 			body: { label: localLabel },
+			params: { path: { label_uid: uid } },
 		})) as unknown;
 		const putError = (res as { error?: unknown } | undefined)?.error;
 		ContentstackError.throwIfError(putError, `Failed to update label: ${uid}`);
@@ -88,8 +91,9 @@ async function updateIfNecessary(
 
 	if (!shouldUpdate) return;
 
-	const res = (await ctx.cs.client.PUT(`/v3/labels/${uid}`, {
+	const res = (await ctx.cs.client.PUT('/v3/labels/{label_uid}', {
 		body: { label: localLabel },
+		params: { path: { label_uid: uid } },
 	})) as unknown;
 	const putError = (res as { error?: unknown } | undefined)?.error;
 	ContentstackError.throwIfError(putError, `Failed to update label: ${uid}`);

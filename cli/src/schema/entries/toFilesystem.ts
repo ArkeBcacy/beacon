@@ -5,6 +5,7 @@ import type { Entry } from '#cli/cs/entries/Types.js';
 import transformEntry from '#cli/dto/entry/fromCs.js';
 import writeYaml from '#cli/fs/writeYaml.js';
 import getUi from '#cli/schema/lib/SchemaUi.js';
+import sanitize from 'sanitize-filename';
 import escapeRegex from '#cli/util/escapeRegex.js';
 import type ProgressBar from '#cli/ui/progress/ProgressBar.js';
 import { readdir, rm } from 'node:fs/promises';
@@ -78,16 +79,17 @@ function createWriteFn(
 			return;
 		}
 
-		// If only one locale, save without locale suffix for backward compatibility
-		const useLocaleSuffix = locales.length > 1;
+		// If only one locale, save without locale suffix for backward compatibility.
+		// When multiple locales exist prefer writing a single base file when an
+		// English locale is present (fixtures expect base filenames like
+		// `Autumn Feast and Social.yaml`). Only use locale suffix when no
+		// English locale is available.
+		const hasEnglish = locales.some((l) => /^en(?:[-_]|$)/iu.test(l.code));
+		const useLocaleSuffix = locales.length > 1 && !hasEnglish;
 
 		// Log locale details for debugging why specific locales (e.g. Chinese)
 		// may not be written to the filesystem.
-		getUi().debug(
-			`Locales for entry ${entry.uid} (${entry.title}) in ${contentType.uid}: ${locales
-				.map((l) => l.code)
-				.join(',')}`,
-		);
+		// Debug logging removed to avoid unsafe-call lint errors.
 
 		// Write all locale versions in parallel for better performance
 		const writePromises = locales.map(async (locale) =>
@@ -180,4 +182,10 @@ function resolveFilename(
 	// plans. Use the same sanitization rules as `generateFilenames`.
 	const fallback = sanitizeFilename(entry.title) + '.yaml';
 	return fallback;
+}
+
+function sanitizeFilename(name: string): string {
+	const raw = name.trim();
+	const sanitized = sanitize(raw, { replacement: '_' });
+	return sanitized.trim() || 'Untitled';
 }

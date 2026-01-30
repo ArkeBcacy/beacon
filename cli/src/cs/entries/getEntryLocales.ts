@@ -11,18 +11,8 @@ export interface LocaleInfo {
 	readonly uid: string;
 }
 
-interface LocalesResponse {
-	readonly locales: readonly LocaleInfo[];
-}
-
-function isLocaleInfo(o: unknown): o is LocaleInfo {
-	return isRecord(o) && typeof (o as any).code === 'string';
-}
-
-function isLocalesResponse(o: unknown): o is LocalesResponse {
-	return (
-		isRecord(o) && Array.isArray(o.locales) && o.locales.every(isLocaleInfo)
-	);
+function isLocaleInfoRecord(o: unknown): o is Record<string, unknown> {
+	return isRecord(o) && typeof o.code === 'string';
 }
 
 /**
@@ -68,21 +58,29 @@ export default async function getEntryLocales(
 
 	const result = data as unknown;
 
-	if (!isRecord(result) || !Array.isArray((result as any).locales)) {
+	if (!isRecord(result)) {
 		throw new Error(msg);
 	}
 
-	// Normalize locales to ensure downstream callers have `code`, `name`, and `uid`.
-	const rawLocales: Array<Record<string, unknown>> = (result as any).locales;
-	const normalized = rawLocales.map((l) => {
-		const code = String(l?.code ?? '');
+	const raw = result.locales;
+	if (!Array.isArray(raw)) {
+		throw new Error(msg);
+	}
+
+	const normalized: LocaleInfo[] = raw.map((item) => {
+		const rec = isLocaleInfoRecord(item)
+			? item
+			: ({ code: '' } as Record<string, unknown>);
+		const code = typeof rec.code === 'string' ? rec.code : '';
 		return {
 			code,
-			fallback_locale: l?.fallback_locale as string | undefined,
-			name:
-				(l && typeof (l as any).name === 'string' && (l as any).name) || code,
-			uid: (l && typeof (l as any).uid === 'string' && (l as any).uid) || code,
-		} as LocaleInfo;
+			fallback_locale:
+				typeof rec.fallback_locale === 'string'
+					? rec.fallback_locale
+					: undefined,
+			name: typeof rec.name === 'string' ? rec.name : code,
+			uid: typeof rec.uid === 'string' ? rec.uid : code,
+		};
 	});
 
 	return normalized;

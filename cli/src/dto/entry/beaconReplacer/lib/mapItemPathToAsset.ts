@@ -8,7 +8,7 @@ export default function mapItemPathToAsset(
 ) {
 	const normalized = itemPath
 		.split('/')
-		.map((s) => s.replace(/\s+/g, ' ').trim())
+		.map((s) => s.replace(/\s+/gu, ' ').trim())
 		.join('/');
 
 	const result = resolveRawAssetItem(

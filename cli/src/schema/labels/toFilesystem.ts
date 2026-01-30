@@ -3,8 +3,9 @@ import writeYaml from '#cli/fs/writeYaml.js';
 import schemaDirectory from '../content-types/schemaDirectory.js';
 import { MutableTransferResults } from '../xfer/TransferResults.js';
 import createProgressBar from '../lib/createProgressBar.js';
+import type Ctx from '../ctx/Ctx.js';
 
-export default async function toFilesystem(ctx) {
+export default async function toFilesystem(ctx: Ctx) {
 	const directory = schemaDirectory();
 	const bar = createProgressBar('Labels', 1, 0);
 

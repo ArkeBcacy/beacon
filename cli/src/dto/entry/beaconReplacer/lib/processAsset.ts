@@ -4,6 +4,11 @@ export default function processAsset(
 	this: BeaconReplacer,
 	assetItemPath: string,
 ) {
-	const asset = this.mapItemPathToAsset(assetItemPath);
-	return { ...asset, ACL: [] };
+	try {
+		const asset = this.mapItemPathToAsset(assetItemPath);
+		return { ...asset, ACL: [] };
+	} catch (err) {
+		// If an asset cannot be mapped, rethrow the original error.
+		throw err;
+	}
 }

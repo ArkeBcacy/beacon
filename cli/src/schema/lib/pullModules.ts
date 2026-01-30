@@ -1,6 +1,7 @@
 import type { ContentType } from '#cli/cs/content-types/Types.js';
 import assets from '../assets/toFilesystem.js';
 import contentTypes from '../content-types/toFilesystem.js';
+import labels from '../labels/toFilesystem.js';
 import type Ctx from '../ctx/Ctx.js';
 import clean from '../entries/clean.js';
 import entries from '../entries/toFilesystem.js';
@@ -15,6 +16,7 @@ export default async function* pullModules(
 	yield ['Assets', assets(ctx)];
 	yield ['Global Fields', globalFields(ctx)];
 	yield ['Taxonomies', taxonomies(ctx)];
+	yield ['Labels', labels(ctx)];
 	yield ['Content Types', contentTypes(ctx)];
 
 	const summary = summarizeContentTypes(ctx);

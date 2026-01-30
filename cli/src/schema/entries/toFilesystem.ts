@@ -81,6 +81,14 @@ function createWriteFn(
 		// If only one locale, save without locale suffix for backward compatibility
 		const useLocaleSuffix = locales.length > 1;
 
+		// Log locale details for debugging why specific locales (e.g. Chinese)
+		// may not be written to the filesystem.
+		getUi().debug(
+			`Locales for entry ${entry.uid} (${entry.title}) in ${contentType.uid}: ${locales
+				.map((l) => l.code)
+				.join(',')}`,
+		);
+
 		// Write all locale versions in parallel for better performance
 		const writePromises = locales.map(async (locale) =>
 			writeLocaleVersion(
@@ -162,10 +170,14 @@ function resolveFilename(
 	}
 
 	const generated = filenamesByTitle.get(entry.title);
-	if (!generated) {
-		const msg = `No filename found for entry [${entry.uid}]: ${entry.title}`;
-		throw new Error(msg);
+	if (generated) {
+		return generated;
 	}
 
-	return generated;
+	// Fallback: sanitize the entry title to produce a filename so deletions
+	// and other operations do not fail when a mapping is missing. This can
+	// happen when entries exist on one side but not the other during merge
+	// plans. Use the same sanitization rules as `generateFilenames`.
+	const fallback = sanitizeFilename(entry.title) + '.yaml';
+	return fallback;
 }

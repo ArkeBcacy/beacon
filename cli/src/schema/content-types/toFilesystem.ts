@@ -1,4 +1,5 @@
 import exportContentType from '#cli/cs/content-types/export.js';
+import getUi from '#cli/schema/lib/SchemaUi.js';
 import type { Schema } from '#cli/cs/Types.js';
 import writeYaml from '#cli/fs/writeYaml.js';
 import { rm } from 'node:fs/promises';
@@ -16,7 +17,14 @@ export default async function toFilesystem(ctx: Ctx) {
 	const getPath = (uid: string) => resolve(directory, `${uid}.yaml`);
 
 	const write = async (schema: Schema) => {
+		const ui = getUi();
 		const exported = await exportContentType(ctx.cs.client, schema.uid);
+		ui.debug(
+			`Exported content type ${schema.uid} labels: ${JSON.stringify(
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any
+				(exported as any).labels,
+			)}`,
+		);
 		const transformed = fromCs(exported);
 		await writeYaml(getPath(schema.uid), transformed);
 	};

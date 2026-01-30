@@ -11,6 +11,7 @@ import PushResults from './lib/PushResults.js';
 import getUi from './lib/SchemaUi.js';
 import taxonomies from './taxonomies/toContentstack.js';
 import terms from './terms/toContentstack.js';
+import labels from './labels/toContentstack.js';
 
 export default async function push(client: Client) {
 	const results = new PushResults();
@@ -62,6 +63,7 @@ export default async function push(client: Client) {
 	}
 
 	await results.set('References', updateMissedReferences(ctx));
+	await results.set('Labels', labels(ctx));
 	return results.value;
 }
 

@@ -6,7 +6,15 @@ export default function mapItemPathToAsset(
 	this: BeaconReplacer,
 	itemPath: string,
 ) {
-	const result = resolveRawAssetItem(this.ctx.cs.assets.byParentUid, itemPath);
+	const normalized = itemPath
+		.split('/')
+		.map((s) => s.replace(/\s+/g, ' ').trim())
+		.join('/');
+
+	const result = resolveRawAssetItem(
+		this.ctx.cs.assets.byParentUid,
+		normalized,
+	);
 
 	if (!result) {
 		throw new Error(`Could not find asset ${itemPath}.`);

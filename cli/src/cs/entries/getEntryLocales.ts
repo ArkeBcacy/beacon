@@ -16,12 +16,7 @@ interface LocalesResponse {
 }
 
 function isLocaleInfo(o: unknown): o is LocaleInfo {
-	return (
-		isRecord(o) &&
-		typeof o.code === 'string' &&
-		typeof o.name === 'string' &&
-		typeof o.uid === 'string'
-	);
+	return isRecord(o) && typeof (o as any).code === 'string';
 }
 
 function isLocalesResponse(o: unknown): o is LocalesResponse {
@@ -73,9 +68,22 @@ export default async function getEntryLocales(
 
 	const result = data as unknown;
 
-	if (!isLocalesResponse(result)) {
+	if (!isRecord(result) || !Array.isArray((result as any).locales)) {
 		throw new Error(msg);
 	}
 
-	return result.locales;
+	// Normalize locales to ensure downstream callers have `code`, `name`, and `uid`.
+	const rawLocales: Array<Record<string, unknown>> = (result as any).locales;
+	const normalized = rawLocales.map((l) => {
+		const code = String(l?.code ?? '');
+		return {
+			code,
+			fallback_locale: l?.fallback_locale as string | undefined,
+			name:
+				(l && typeof (l as any).name === 'string' && (l as any).name) || code,
+			uid: (l && typeof (l as any).uid === 'string' && (l as any).uid) || code,
+		} as LocaleInfo;
+	});
+
+	return normalized;
 }

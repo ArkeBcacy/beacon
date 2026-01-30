@@ -418,7 +418,7 @@ Some development scripts are provided:
 - `yarn lint` - Invoke ESLint.
 - `yarn pretty` - Invoke Prettier.
 - `yarn test` - Invoke unit tests.
-- `yarn workspace @arkebcacy/beacon-cli generate` - Rebuild OpenAPI type
+- `yarn workspace @arkebcacy/beacon-cli-temp generate` - Rebuild OpenAPI type
   definitions.
 
 ## Deployment

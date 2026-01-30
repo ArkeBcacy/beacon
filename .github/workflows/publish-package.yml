@@ -31,12 +31,12 @@ jobs:
       - name: Prepare dependencies
         uses: ./.github/actions/prepare-dependencies
 
-      # - name: Publish CLI package to NPM
-      #   shell: bash
-      #   run: yarn workspace @arkebcacy/beacon-cli-temp npm publish --access public
-      #   env:
-      #     YARN_NPM_PUBLISH_REGISTRY: https://registry.npmjs.org
-      #     YARN_NPM_AUTH_TOKEN: ${{ secrets.PUBLISH_PACKAGES_NPM }}
+      - name: Publish CLI package to NPM
+        shell: bash
+        run: yarn workspace @arkebcacy/beacon-cli-temp npm publish --access public
+        env:
+          YARN_NPM_PUBLISH_REGISTRY: https://registry.npmjs.org
+          YARN_NPM_AUTH_TOKEN: ${{ secrets.PUBLISH_PACKAGES_NPM }}
 
       - name: Publish CLI package to GitHub
         shell: bash

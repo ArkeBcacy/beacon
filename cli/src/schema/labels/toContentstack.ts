@@ -30,10 +30,10 @@ export default async function toContentstack(ctx: Ctx) {
 		flatLabels = [...flatten(data.labels)];
 	} else if (isRecord(data) && Array.isArray(data.labels)) {
 		// Legacy flat array format
-		flatLabels = data.labels;
+		flatLabels = data.labels as Label[];
 	} else if (Array.isArray(data)) {
 		// Direct array format
-		flatLabels = data;
+		flatLabels = data as Label[];
 	}
 
 	ui.info(`Labels: read ${flatLabels.length} label(s) from ${path}`);

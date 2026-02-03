@@ -50,6 +50,7 @@ export default function organize(
 }
 
 interface MutableNode {
+	[key: string]: unknown;
 	readonly uid: string;
 	readonly name: string;
 	children?: MutableNode[];

@@ -7,6 +7,7 @@ import getUi from '../lib/SchemaUi.js';
 import isRecord from '#cli/util/isRecord.js';
 import flatten from '#cli/dto/labels/flatten.js';
 import { isNormalizedLabels } from '#cli/dto/labels/NormalizedLabels.js';
+import type Label from '#cli/cs/labels/Label.js';
 
 export default async function toContentstack(ctx: Ctx) {
 	const directory = schemaDirectory();
@@ -23,10 +24,10 @@ export default async function toContentstack(ctx: Ctx) {
 	}
 
 	// Support both hierarchical and flat label structures
-	let flatLabels: unknown[] = [];
+	let flatLabels: Label[] = [];
 	if (isNormalizedLabels(data)) {
 		// Hierarchical structure - flatten it first
-		flatLabels = flatten(data.labels);
+		flatLabels = [...flatten(data.labels)];
 	} else if (isRecord(data) && Array.isArray(data.labels)) {
 		// Legacy flat array format
 		flatLabels = data.labels;

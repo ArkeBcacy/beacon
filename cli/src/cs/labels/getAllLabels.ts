@@ -27,9 +27,9 @@ export default async function getAllLabels(client: Client): Promise<Label[]> {
 			typeof raw.name === 'string'
 		) {
 			const label: Label = {
-				uid: raw.uid,
 				name: raw.name,
 				parent_uid: typeof raw.parent_uid === 'string' ? raw.parent_uid : null,
+				uid: raw.uid,
 			};
 			if (isLabel(label)) {
 				labels.push(label);

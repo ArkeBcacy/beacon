@@ -6,7 +6,6 @@ import { MutableTransferResults } from '../xfer/TransferResults.js';
 import getUi from '../lib/SchemaUi.js';
 import isRecord from '#cli/util/isRecord.js';
 import flatten from '#cli/dto/labels/flatten.js';
-import type { LabelTreeNode } from '#cli/dto/labels/NormalizedLabels.js';
 import { isNormalizedLabels } from '#cli/dto/labels/NormalizedLabels.js';
 
 export default async function toContentstack(ctx: Ctx) {

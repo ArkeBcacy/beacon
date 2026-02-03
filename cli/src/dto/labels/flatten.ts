@@ -13,7 +13,7 @@ export default function flatten(
 			result.push({
 				...label,
 				parent_uid: parentUid,
-			});
+			} as Label);
 
 			if (children) {
 				traverse(children, node.uid);

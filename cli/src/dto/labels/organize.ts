@@ -16,11 +16,14 @@ export default function organize(
 	const byUid = new Map<string, MutableNode>();
 	const topLevel: MutableNode[] = [];
 
-	for (const { uid, name } of labels) {
-		// Justification: Keys are placed in this order for readability in
-		// the serialization of the object.
-		// eslint-disable-next-line sort-keys
-		byUid.set(uid, { uid, name });
+	for (const label of labels) {
+		const { parent_uid, ...labelWithoutParent } = label;
+		// Preserve all fields except parent_uid (which is represented by the tree structure)
+		byUid.set(label.uid, {
+			...labelWithoutParent,
+			name: label.name,
+			uid: label.uid,
+		});
 	}
 
 	for (const { uid, parent_uid } of labels) {

@@ -26,7 +26,9 @@ export default async function getAllLabels(client: Client): Promise<Label[]> {
 			typeof raw.uid === 'string' &&
 			typeof raw.name === 'string'
 		) {
+			// Preserve all fields from the remote label
 			const label: Label = {
+				...raw,
 				name: raw.name,
 				parent_uid: typeof raw.parent_uid === 'string' ? raw.parent_uid : null,
 				uid: raw.uid,

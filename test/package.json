@@ -13,7 +13,8 @@
   "name": "@arkebcacy/beacon-test",
   "private": true,
   "scripts": {
-    "clean": "node ./build/clean.js"
+    "clean": "node ./build/clean.js",
+    "test": "vitest run"
   },
   "type": "module",
   "version": "1.0.0"

@@ -7,6 +7,8 @@ export default interface NormalizedLabels {
 }
 
 export interface LabelTreeNode {
+	// Allow any additional fields from the label
+	readonly [key: string]: unknown;
 	readonly uid: Label['uid'];
 	readonly name: Label['name'];
 	readonly children?: readonly LabelTreeNode[];

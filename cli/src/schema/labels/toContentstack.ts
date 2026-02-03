@@ -55,12 +55,10 @@ function canonicalize(value: unknown): unknown {
 		const obj = value;
 		const out: Record<string, unknown> = {};
 		for (const key of Object.keys(obj).sort()) {
-			if (
-				key === 'uid' ||
-				key === 'created_at' ||
-				key === 'updated_at' ||
-				key === 'parent_uid'
-			)
+			if (key === 'uid' || key === 'created_at' || key === 'updated_at')
+				continue;
+			// Normalize parent_uid: skip if null or undefined
+			if (key === 'parent_uid' && (obj[key] === null || obj[key] === undefined))
 				continue;
 			out[key] = canonicalize(obj[key]);
 		}
@@ -83,7 +81,7 @@ async function updateIfNecessary(
 	if (!isRecord(remoteData) || !isRecord(remoteData.label)) {
 		// If we can't parse remote data, err on the side of updating
 		const res = (await ctx.cs.client.PUT('/v3/labels/{label_uid}', {
-			body: { label: localLabel },
+			body: { label: prepareLabel(localLabel) },
 			params: { path: { label_uid: uid } },
 		})) as unknown;
 		const putError = (res as { error?: unknown } | undefined)?.error;
@@ -105,7 +103,7 @@ async function updateIfNecessary(
 	if (!shouldUpdate) return;
 
 	const res = (await ctx.cs.client.PUT('/v3/labels/{label_uid}', {
-		body: { label: localLabel },
+		body: { label: prepareLabel(localLabel) },
 		params: { path: { label_uid: uid } },
 	})) as unknown;
 	const putError = (res as { error?: unknown } | undefined)?.error;
@@ -119,7 +117,7 @@ async function createLabel(
 	results: MutableTransferResults,
 ) {
 	const res = (await ctx.cs.client.POST('/v3/labels', {
-		body: { label: localLabel },
+		body: { label: prepareLabel(localLabel) },
 	})) as unknown;
 	const postError = (res as { error?: unknown } | undefined)?.error;
 	ContentstackError.throwIfError(postError, `Failed to create label`);
@@ -134,6 +132,16 @@ async function createLabel(
 		if (createdUid === null && typeof pd.uid === 'string') createdUid = pd.uid;
 	}
 	results.created.add(createdUid ?? '<created>');
+}
+
+// Prepare label for API by removing parent_uid if null
+function prepareLabel(label: Record<string, unknown>): Record<string, unknown> {
+	const { parent_uid, ...rest } = label;
+	// Only include parent_uid if it's a non-null string
+	if (typeof parent_uid === 'string') {
+		return { ...rest, parent_uid };
+	}
+	return rest;
 }
 
 async function handleLabel(

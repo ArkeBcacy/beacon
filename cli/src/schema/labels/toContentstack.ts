@@ -5,6 +5,9 @@ import type Ctx from '../ctx/Ctx.js';
 import { MutableTransferResults } from '../xfer/TransferResults.js';
 import getUi from '../lib/SchemaUi.js';
 import isRecord from '#cli/util/isRecord.js';
+import flatten from '#cli/dto/labels/flatten.js';
+import type { LabelTreeNode } from '#cli/dto/labels/NormalizedLabels.js';
+import { isNormalizedLabels } from '#cli/dto/labels/NormalizedLabels.js';
 
 export default async function toContentstack(ctx: Ctx) {
 	const directory = schemaDirectory();
@@ -20,18 +23,24 @@ export default async function toContentstack(ctx: Ctx) {
 		return new MutableTransferResults();
 	}
 
-	const labels =
-		isRecord(data) && Array.isArray(data.labels)
-			? data.labels
-			: Array.isArray(data)
-				? (data as unknown[])
-				: [];
+	// Support both hierarchical and flat label structures
+	let flatLabels: unknown[] = [];
+	if (isNormalizedLabels(data)) {
+		// Hierarchical structure - flatten it first
+		flatLabels = flatten(data.labels);
+	} else if (isRecord(data) && Array.isArray(data.labels)) {
+		// Legacy flat array format
+		flatLabels = data.labels;
+	} else if (Array.isArray(data)) {
+		// Direct array format
+		flatLabels = data;
+	}
 
-	ui.info(`Labels: read ${labels.length} label(s) from ${path}`);
+	ui.info(`Labels: read ${flatLabels.length} label(s) from ${path}`);
 
 	const results = new MutableTransferResults();
 
-	for (const labelRaw of labels) {
+	for (const labelRaw of flatLabels) {
 		if (!isRecord(labelRaw)) continue;
 		// keep per-label logic in helper to reduce complexity of this function
 
@@ -47,7 +56,12 @@ function canonicalize(value: unknown): unknown {
 		const obj = value;
 		const out: Record<string, unknown> = {};
 		for (const key of Object.keys(obj).sort()) {
-			if (key === 'uid' || key === 'created_at' || key === 'updated_at')
+			if (
+				key === 'uid' ||
+				key === 'created_at' ||
+				key === 'updated_at' ||
+				key === 'parent_uid'
+			)
 				continue;
 			out[key] = canonicalize(obj[key]);
 		}

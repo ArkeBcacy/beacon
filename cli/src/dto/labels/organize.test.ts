@@ -5,9 +5,9 @@ import type Label from '#cli/cs/labels/Label.js';
 describe('organize', () => {
 	it('organizes flat labels into hierarchy', () => {
 		const labels: Label[] = [
-			{ name: 'Parent', parent_uid: null, uid: 'parent' },
-			{ name: 'Child 1', parent_uid: 'parent', uid: 'child1' },
-			{ name: 'Child 2', parent_uid: 'parent', uid: 'child2' },
+			{ name: 'Parent', parent: [], uid: 'parent' },
+			{ name: 'Child 1', parent: ['parent'], uid: 'child1' },
+			{ name: 'Child 2', parent: ['parent'], uid: 'child2' },
 		];
 
 		const result = organize(labels);
@@ -26,10 +26,10 @@ describe('organize', () => {
 
 	it('organizes component label structure from screenshot', () => {
 		const labels: Label[] = [
-			{ name: 'Component', parent_uid: null, uid: 'component' },
-			{ name: 'Calculator', parent_uid: 'component', uid: 'calculator' },
-			{ name: 'Data', parent_uid: 'component', uid: 'data' },
-			{ name: 'Page', parent_uid: 'component', uid: 'page' },
+			{ name: 'Component', parent: [], uid: 'component' },
+			{ name: 'Calculator', parent: ['component'], uid: 'calculator' },
+			{ name: 'Data', parent: ['component'], uid: 'data' },
+			{ name: 'Page', parent: ['component'], uid: 'page' },
 		];
 
 		const result = organize(labels);
@@ -49,10 +49,10 @@ describe('organize', () => {
 
 	it('handles deeply nested labels', () => {
 		const labels: Label[] = [
-			{ name: 'Root', parent_uid: null, uid: 'root' },
-			{ name: 'Level 1', parent_uid: 'root', uid: 'level1' },
-			{ name: 'Level 2', parent_uid: 'level1', uid: 'level2' },
-			{ name: 'Level 3', parent_uid: 'level2', uid: 'level3' },
+			{ name: 'Root', parent: [], uid: 'root' },
+			{ name: 'Level 1', parent: ['root'], uid: 'level1' },
+			{ name: 'Level 2', parent: ['level1'], uid: 'level2' },
+			{ name: 'Level 3', parent: ['level2'], uid: 'level3' },
 		];
 
 		const result = organize(labels);
@@ -80,9 +80,9 @@ describe('organize', () => {
 
 	it('handles multiple top-level labels', () => {
 		const labels: Label[] = [
-			{ name: 'Label 1', parent_uid: null, uid: 'label1' },
-			{ name: 'Label 2', parent_uid: null, uid: 'label2' },
-			{ name: 'Child', parent_uid: 'label2', uid: 'child' },
+			{ name: 'Label 1', parent: [], uid: 'label1' },
+			{ name: 'Label 2', parent: [], uid: 'label2' },
+			{ name: 'Child', parent: ['label2'], uid: 'child' },
 		];
 
 		const result = organize(labels);
@@ -104,7 +104,7 @@ describe('organize', () => {
 
 	it('throws error for orphaned label', () => {
 		const labels: Label[] = [
-			{ name: 'Child', parent_uid: 'nonexistent', uid: 'child' },
+			{ name: 'Child', parent: ['nonexistent'], uid: 'child' },
 		];
 
 		expect(() => organize(labels)).toThrow(
@@ -114,10 +114,10 @@ describe('organize', () => {
 
 	it('preserves order of siblings', () => {
 		const labels: Label[] = [
-			{ name: 'Parent', parent_uid: null, uid: 'parent' },
-			{ name: 'Child 3', parent_uid: 'parent', uid: 'child3' },
-			{ name: 'Child 1', parent_uid: 'parent', uid: 'child1' },
-			{ name: 'Child 2', parent_uid: 'parent', uid: 'child2' },
+			{ name: 'Parent', parent: [], uid: 'parent' },
+			{ name: 'Child 3', parent: ['parent'], uid: 'child3' },
+			{ name: 'Child 1', parent: ['parent'], uid: 'child1' },
+			{ name: 'Child 2', parent: ['parent'], uid: 'child2' },
 		];
 
 		const result = organize(labels);

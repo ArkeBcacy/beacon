@@ -80,28 +80,24 @@ function createWriteFn(
 		}
 
 		// If only one locale, save without locale suffix for backward compatibility.
-		// When multiple locales exist prefer writing a single base file when an
-		// English locale is present (fixtures expect base filenames like
-		// `Autumn Feast and Social.yaml`). Only use locale suffix when no
-		// English locale is available.
-		const hasEnglish = locales.some((l) => /^en(?:[-_]|$)/iu.test(l.code));
-		const useLocaleSuffix = locales.length > 1 && !hasEnglish;
-
-		// Log locale details for debugging why specific locales (e.g. Chinese)
-		// may not be written to the filesystem.
-		// Debug logging removed to avoid unsafe-call lint errors.
+		// When multiple locales exist, write English as base file and other locales
+		// with locale suffixes (e.g., Entry.yaml for English, Entry.zh-chs.yaml for Chinese)
 
 		// Write all locale versions in parallel for better performance
-		const writePromises = locales.map(async (locale) =>
-			writeLocaleVersion(
+		const writePromises = locales.map(async (locale) => {
+			const isEnglish = /^en(?:[-_]|$)/iu.test(locale.code);
+			// Use locale suffix for non-English locales when multiple locales exist
+			const useLocaleSuffix = locales.length > 1 && !isEnglish;
+
+			return writeLocaleVersion(
 				ctx,
 				contentType,
 				entry,
 				locale.code,
 				getBasePath,
 				useLocaleSuffix,
-			),
-		);
+			);
+		});
 
 		await Promise.all(writePromises);
 	};
@@ -122,7 +118,26 @@ async function writeLocaleVersion(
 		localeCode,
 	);
 
+	// Skip writing this locale version if it's a fallback (locale doesn't match requested)
+	// This happens when Contentstack returns the default locale content because
+	// no localized version exists for the requested locale
+	if (
+		useLocaleSuffix &&
+		exported.locale &&
+		typeof exported.locale === 'string' &&
+		exported.locale !== localeCode
+	) {
+		// This is a fallback locale, skip writing it
+		return;
+	}
+
 	const { uid, ...transformed } = transformEntry(ctx, contentType, exported);
+
+	// Preserve the actual locale code from the source stack
+	// This ensures we maintain the exact language-region configuration
+	if ('locale' in transformed) {
+		transformed.locale = localeCode;
+	}
 
 	const basePath = getBasePath(entry);
 	const filePath = useLocaleSuffix

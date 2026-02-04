@@ -12,7 +12,7 @@ export default function flatten(
 
 			result.push({
 				...label,
-				parent_uid: parentUid,
+				parent: parentUid ? [parentUid] : [],
 			} as Label);
 
 			if (children) {

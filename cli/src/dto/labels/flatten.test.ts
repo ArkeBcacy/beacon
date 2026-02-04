@@ -18,9 +18,9 @@ describe('flatten', () => {
 		const result = flatten(tree);
 
 		expect(result).toEqual([
-			{ name: 'Parent', parent_uid: null, uid: 'parent' },
-			{ name: 'Child 1', parent_uid: 'parent', uid: 'child1' },
-			{ name: 'Child 2', parent_uid: 'parent', uid: 'child2' },
+			{ name: 'Parent', parent: [], uid: 'parent' },
+			{ name: 'Child 1', parent: ['parent'], uid: 'child1' },
+			{ name: 'Child 2', parent: ['parent'], uid: 'child2' },
 		]);
 	});
 
@@ -40,10 +40,10 @@ describe('flatten', () => {
 		const result = flatten(tree);
 
 		expect(result).toEqual([
-			{ name: 'Component', parent_uid: null, uid: 'component' },
-			{ name: 'Calculator', parent_uid: 'component', uid: 'calculator' },
-			{ name: 'Data', parent_uid: 'component', uid: 'data' },
-			{ name: 'Page', parent_uid: 'component', uid: 'page' },
+			{ name: 'Component', parent: [], uid: 'component' },
+			{ name: 'Calculator', parent: ['component'], uid: 'calculator' },
+			{ name: 'Data', parent: ['component'], uid: 'data' },
+			{ name: 'Page', parent: ['component'], uid: 'page' },
 		]);
 	});
 
@@ -71,10 +71,10 @@ describe('flatten', () => {
 		const result = flatten(tree);
 
 		expect(result).toEqual([
-			{ name: 'Root', parent_uid: null, uid: 'root' },
-			{ name: 'Level 1', parent_uid: 'root', uid: 'level1' },
-			{ name: 'Level 2', parent_uid: 'level1', uid: 'level2' },
-			{ name: 'Level 3', parent_uid: 'level2', uid: 'level3' },
+			{ name: 'Root', parent: [], uid: 'root' },
+			{ name: 'Level 1', parent: ['root'], uid: 'level1' },
+			{ name: 'Level 2', parent: ['level1'], uid: 'level2' },
+			{ name: 'Level 3', parent: ['level2'], uid: 'level3' },
 		]);
 	});
 
@@ -91,9 +91,9 @@ describe('flatten', () => {
 		const result = flatten(tree);
 
 		expect(result).toEqual([
-			{ name: 'Label 1', parent_uid: null, uid: 'label1' },
-			{ name: 'Label 2', parent_uid: null, uid: 'label2' },
-			{ name: 'Child', parent_uid: 'label2', uid: 'child' },
+			{ name: 'Label 1', parent: [], uid: 'label1' },
+			{ name: 'Label 2', parent: [], uid: 'label2' },
+			{ name: 'Child', parent: ['label2'], uid: 'child' },
 		]);
 	});
 
@@ -111,8 +111,8 @@ describe('flatten', () => {
 		const result = flatten(tree);
 
 		expect(result).toEqual([
-			{ name: 'Label 1', parent_uid: null, uid: 'label1' },
-			{ name: 'Label 2', parent_uid: null, uid: 'label2' },
+			{ name: 'Label 1', parent: [], uid: 'label1' },
+			{ name: 'Label 2', parent: [], uid: 'label2' },
 		]);
 	});
 });

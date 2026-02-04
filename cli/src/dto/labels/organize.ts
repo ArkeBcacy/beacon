@@ -1,10 +1,10 @@
 import type Label from '#cli/cs/labels/Label.js';
 import type { LabelTreeNode } from './NormalizedLabels.js';
 
-// Labels have a tree structure defined by uid/parent_uid.
+// Labels have a tree structure defined by uid/parent array.
 //
-// The API returns a flat array that includes uid/parent_uid, but
-// leaves it up to the client to reconstruct the tree.
+// The API returns a flat array that includes uid/parent, where parent is an array
+// containing the parent UID (or empty array for top-level labels).
 //
 // We organize labels into a tree structure for serialization.
 //
@@ -17,8 +17,8 @@ export default function organize(
 	const topLevel: MutableNode[] = [];
 
 	for (const label of labels) {
-		const { parent_uid, ...labelWithoutParent } = label;
-		// Preserve all fields except parent_uid (which is represented by the tree structure)
+		const { parent, ...labelWithoutParent } = label;
+		// Preserve all fields except parent (which is represented by the tree structure)
 		byUid.set(label.uid, {
 			...labelWithoutParent,
 			name: label.name,
@@ -26,24 +26,25 @@ export default function organize(
 		});
 	}
 
-	for (const { uid, parent_uid } of labels) {
-		const label = byUid.get(uid);
-		if (!label) {
-			throw new Error(`Label ${uid} not found`);
+	for (const label of labels) {
+		const node = byUid.get(label.uid);
+		if (!node) {
+			throw new Error(`Label ${label.uid} not found`);
 		}
 
-		if (!parent_uid) {
-			topLevel.push(label);
+		const parentUid = label.parent.length > 0 ? label.parent[0] : null;
+		if (!parentUid) {
+			topLevel.push(node);
 			continue;
 		}
 
-		const parent = byUid.get(parent_uid);
+		const parent = byUid.get(parentUid);
 		if (!parent) {
-			const msg = `Orphaned label ${uid} with parent ${parent_uid}`;
+			const msg = `Orphaned label ${label.uid} with parent ${parentUid}`;
 			throw new Error(msg);
 		}
 
-		(parent.children ??= []).push(label);
+		(parent.children ??= []).push(node);
 	}
 
 	return topLevel;

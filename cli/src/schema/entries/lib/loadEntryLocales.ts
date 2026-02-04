@@ -98,11 +98,6 @@ async function tryLoadLocaleFile(
 
 	return null;
 }
-		return { entry, locale: 'default' };
-	}
-
-	return null;
-}
 
 async function loadEntryFile(
 	directory: string,

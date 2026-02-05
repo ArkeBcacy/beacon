@@ -4,7 +4,7 @@
 		"composite": true,
 		"outDir": "../dist",
 		"rootDir": ".",
-		"skipLibCheck": true,
+		"skipLibCheck": false,
 		"paths": {
 			"#cli/*": ["*"]
 		}

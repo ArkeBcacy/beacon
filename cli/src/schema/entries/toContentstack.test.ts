@@ -16,7 +16,7 @@ describe('Entry matching by UID and title', () => {
 		// When both entries have the same real Contentstack UID,
 		// they should be matched even if titles are different
 		expect(fsEntry.uid).toBe(csEntry.uid);
-		expect(fsEntry.uid.startsWith('blt')).toBe(true);
+		expect(fsEntry.uid!.startsWith('blt')).toBe(true);
 	});
 
 	it('should fall back to title matching for entries without Contentstack UIDs', () => {
@@ -31,7 +31,7 @@ describe('Entry matching by UID and title', () => {
 		};
 
 		// When FS entry doesn't have a real UID, fall back to title matching
-		expect(fsEntry.uid.startsWith('blt')).toBe(false);
+		expect(fsEntry.uid!.startsWith('blt')).toBe(false);
 		expect(fsEntry.title).toBe(csEntry.title);
 	});
 

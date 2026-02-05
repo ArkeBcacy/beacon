@@ -3,7 +3,7 @@
 		"baseUrl": ".",
 		"noEmit": true,
 		"rootDir": ".",
-		"skipLibCheck": true,
+		"skipLibCheck": false,
 		"module": "preserve",
 		"moduleResolution": "bundler",
 		"paths": {

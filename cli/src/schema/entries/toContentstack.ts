@@ -8,12 +8,12 @@ import BeaconReplacer from '#cli/dto/entry/BeaconReplacer.js';
 import type ProgressBar from '#cli/ui/progress/ProgressBar.js';
 import type Ctx from '../ctx/Ctx.js';
 import getUi from '../lib/SchemaUi.js';
-import planMerge from '../xfer/lib/planMerge.js';
 import processPlan from '../xfer/lib/processPlan.js';
 import equality from './equality.js';
 import buildCreator from './lib/buildCreator.js';
 import generateFilenames from './lib/generateFilenames.js';
 import loadEntryLocales from './lib/loadEntryLocales.js';
+import planEntryMerge from './lib/planEntryMerge.js';
 import schemaDirectory from './schemaDirectory.js';
 
 export default async function toContentstack(
@@ -39,7 +39,7 @@ export default async function toContentstack(
 	const result = await processPlan<Entry>({
 		create,
 		deletionStrategy: ui.options.schema.deletionStrategy,
-		plan: planMerge(equality, fsEntriesByTitle, csEntriesByTitle),
+		plan: planEntryMerge(equality, fsEntriesByTitle, csEntriesByTitle, ctx),
 		progress: bar,
 		remove: async (entry) =>
 			deleteEntry(ctx.cs.client, contentType.uid, entry.uid),

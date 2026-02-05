@@ -38,9 +38,15 @@ async function loadContentTypeEntries(
 		for (const [entryTitle, localeMap] of entriesByTitle.entries()) {
 			const preferredEntry = selectPreferredLocale(localeMap);
 			if (preferredEntry) {
+				// Preserve Contentstack UIDs (starting with 'blt'), otherwise use synthetic UID
+				const entryUid = preferredEntry.uid;
+				const uid =
+					typeof entryUid === 'string' && entryUid.startsWith('blt')
+						? entryUid
+						: `file: ${preferredEntry.title}`;
 				entriesSet.add({
 					...preferredEntry,
-					uid: `file: ${preferredEntry.title}`,
+					uid,
 				});
 			} else {
 				// Log warning if entry has files but no valid locale versions

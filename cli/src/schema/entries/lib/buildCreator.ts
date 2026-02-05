@@ -49,11 +49,7 @@ async function loadLocaleVersions(entry: Entry, contentTypeUid: string) {
 
 	// For entries with real Contentstack UIDs, try to find locale files by UID first
 	if (entry.uid.startsWith('blt')) {
-		const localesByUid = await findLocaleFilesByUid(
-			directory,
-			entry.uid,
-			entry.title,
-		);
+		const localesByUid = await findLocaleFilesByUid(directory, entry.uid);
 		if (localesByUid.length > 0) {
 			return localesByUid;
 		}

@@ -215,13 +215,27 @@ async function importAdditionalLocales(
 
 			const localeTransformed = transformer.process(localeVersion.entry);
 
-			return importEntry(
-				ctx.cs.client,
-				contentType.uid,
-				{ ...localeTransformed, uid: created.uid },
-				false,
-				localeVersion.locale,
-			);
+			try {
+				return await importEntry(
+					ctx.cs.client,
+					contentType.uid,
+					{ ...localeTransformed, uid: created.uid },
+					false,
+					localeVersion.locale,
+				);
+			} catch (ex) {
+				// If we get error 201 (localized version already exists), retry with update=true
+				if (isDuplicateKeyError(ex)) {
+					return await importEntry(
+						ctx.cs.client,
+						contentType.uid,
+						{ ...localeTransformed, uid: created.uid },
+						true,
+						localeVersion.locale,
+					);
+				}
+				throw ex;
+			}
 		});
 
 	await Promise.all(importPromises);

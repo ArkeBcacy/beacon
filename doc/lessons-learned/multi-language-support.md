@@ -107,46 +107,46 @@ The Contentstack Management API provides these localization endpoints:
 
 ### Are these being used?
 
-**No, Beacon does not use these specific endpoints.** Instead, it uses the **Import API** with locale parameters.
+**Yes, Beacon uses the dedicated localization endpoints for non-master locale operations.**
 
-### Why not?
+For **master locale** operations, Beacon uses the **Import API** which is designed for bulk data import/export:
 
-**Reason 1: Import API Covers All Cases**
+- `POST /v3/content_types/{uid}/entries/import?overwrite=false` - Create new entry
+- `POST /v3/content_types/{uid}/entries/{uid}/import?overwrite=true` - Update existing entry
 
-The Import API (`/v3/content_types/{content_type_uid}/entries/import`) accepts an optional `locale` query parameter:
+For **localized entries** (non-master locales), Beacon uses the dedicated localization endpoints:
 
-- When `locale` is specified: Creates/updates that specific locale version
-- When `locale` is omitted: Creates/updates the master locale
-- The `overwrite` parameter controls create vs. update behavior
+- `PUT /v3/content_types/{uid}/entries/{uid}?locale={code}` - Create new locale version (Localize an Entry)
+- `PUT /v3/content_types/{uid}/entries/{uid}?locale={code}` - Update existing locale version (Update a Localized Entry)
 
-This single endpoint handles all our needs:
+### Why use different endpoints?
 
-- Creating new entries (with or without locale)
-- Updating existing entries (with or without locale)
-- Creating locale versions of existing entries
+**Reason 1: Semantic Correctness**
 
-**Reason 2: Consistency with Import Workflow**
+Using the endpoints designed for their specific purpose:
 
-Beacon's design philosophy is to use import/export operations that preserve the exact structure of entries. The Import API:
+- Import API is for bulk data import/export operations
+- Localization endpoints are for locale-specific operations
 
-- Accepts complete entry data (all fields)
-- Preserves UIDs (when provided)
-- Works consistently for both creation and updates
+This makes the code's intent clearer and aligns with Contentstack's API design patterns.
 
-The specialized localization endpoints (Localize, Update Localized) have different request structures and would require additional code paths without providing additional functionality.
+**Reason 2: Better API Alignment**
 
-**Reason 3: Simpler Error Handling**
+The localization endpoints are specifically designed for multi-language workflows and may handle edge cases better than the generic import endpoint.
 
-Using a single import endpoint means:
+**Reason 3: Future-Proofing**
 
-- One error handling path
-- Consistent retry logic
-- Unified duplicate key detection
+By using the intended endpoints, Beacon is better positioned to leverage future Contentstack enhancements to localization features.
 
 **Implementation**: See:
 
-- [`importCreate.ts`](../../cli/src/cs/entries/lib/importCreate.ts) - uses Import API with `locale` parameter
-- [`importOverwrite.ts`](../../cli/src/cs/entries/lib/importOverwrite.ts) - uses Import API with `locale` parameter
+- [`importEntry.ts`](../../cli/src/cs/entries/import.ts) - routes to appropriate endpoint based on locale
+- Master locale operations:
+  - [`importCreate.ts`](../../cli/src/cs/entries/lib/importCreate.ts) - uses Import API
+  - [`importOverwrite.ts`](../../cli/src/cs/entries/lib/importOverwrite.ts) - uses Import API
+- Localized entry operations:
+  - [`localizeEntry.ts`](../../cli/src/cs/entries/lib/localizeEntry.ts) - uses Localize an Entry endpoint
+  - [`updateLocalizedEntry.ts`](../../cli/src/cs/entries/lib/updateLocalizedEntry.ts) - uses Update a Localized Entry endpoint
 
 ## Locale Processing Order
 
